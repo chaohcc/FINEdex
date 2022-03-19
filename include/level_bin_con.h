@@ -1342,10 +1342,13 @@ public:
                 }
                 free_childbin(child);
                 // remove from root
-                std::copy(root->slotkey + slot+1, root->slotkey + root->slotuse,
-                          root->slotkey + slot);
-                std::copy(root->children + slot+1, root->children + root->slotuse+1,
-                          root->children + slot);
+                if (unlikely (slot +1 < root->slotuse))  //bug_2, chaohong
+                {
+                    std::copy(root->slotkey + slot+1, root->slotkey + root->slotuse,
+                                   root->slotkey + slot);
+                    std::copy(root->children + slot+1, root->children + root->slotuse+1,
+                                   root->children + slot);
+                }
                 root->slotuse--;
 
                 // root empty?
@@ -1366,7 +1369,10 @@ public:
             // special case: remove the last key?
             if(cslot == child->slotuse){
                 root->lock();
-                root->slotkey[slot] = child->slotkey[child->slotuse - 1];
+                if (unlikely (slot +1 < root->slotuse))  //bug_2, chaohong
+                {
+                  root->slotkey[slot] = child->slotkey[child->slotuse - 1];
+                }
                 memory_fence();
                 root->version++;
                 memory_fence();
