@@ -1369,7 +1369,7 @@ public:
             // special case: remove the last key?
             if(cslot == child->slotuse){
                 root->lock();
-                if (unlikely (slot +1 < root->slotuse))  //bug_2, chaohong
+                if (slot < rootslotmax)    // bug_1, chaohong
                 {
                   root->slotkey[slot] = child->slotkey[child->slotuse - 1];
                 }
